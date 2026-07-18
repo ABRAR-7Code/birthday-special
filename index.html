@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday! 🎂</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #74b9ff 0%, #a1e3f9 70%, #2ecc71 100%);
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Beautiful Garden Ground */
+        .garden-ground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 12%;
+            background: linear-gradient(to bottom, #27ae60, #1e824c);
+            z-index: 2;
+            border-top: 4px solid #2ecc71;
+        }
+
+        /* --- DYNAMIC FLOWERS AND GRASS --- */
+        .garden-details {
+            position: absolute;
+            bottom: 8%;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            z-index: 5;
+            pointer-events: none;
+        }
+        .grass-tuft {
+            position: absolute;
+            width: 2px;
+            height: 12px;
+            background: #2ecc71;
+            box-shadow: 4px -3px 0 #27ae60, -4px -2px 0 #2ecc71;
+            border-radius: 2px;
+        }
+        .flower {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        .flower::before { 
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 14px;
+            background: #27ae60;
+            bottom: -14px;
+            left: 2px;
+        }
+        .flower::after { 
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            left: -4px;
+            top: -4px;
+            border: 4px dotted inherit;
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.2);
+        }
+        
+        /* Responsive Container */
+        .scene {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            perspective: 1200px;
+        }
+
+        /* --- NATURAL 3D TREE SYSTEM --- */
+        .tree-container {
+            position: absolute;
+            bottom: 11%;
+            left: 12%;
+            width: 200px;
+            height: 400px;
+            z-index: 3;
+            transform-style: preserve-3d;
+        }
+        
+        /* Strong Main Trunk */
+        .trunk {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 160px;
+            background: linear-gradient(to right, #4a2f1b, #664225, #362213);
+            border-radius: 8px 8px 0 0;
+            box-shadow: inset 5px 0 12px rgba(0,0,0,0.5), 2px 2px 5px rgba(0,0,0,0.2);
+            z-index: 3;
+        }
+
+        /* Swaying Canopy & Branches */
+        .tree-upper {
+            position: absolute;
+            bottom: 150px; 
+            left: 50%;
+            width: 0;
+            height: 0;
+            transform-style: preserve-3d;
+            animation: windSway 4.8s ease-in-out infinite alternate;
+            transform-origin: bottom center;
+            z-index: 4;
+        }
+
+        @keyframes windSway {
+            0% { transform: rotate(0deg) skewX(0deg); }
+            100% { transform: rotate(-2deg) skewX(-1deg); }
+        }
+
+        /* Main Strong Branches */
+        .branch {
+            position: absolute;
+            background: linear-gradient(to right, #5c3a21, #4a2f1b);
+            border-radius: 8px;
+            transform-origin: bottom center;
+            box-shadow: inset 1px 2px 4px rgba(0,0,0,0.4), 1px 3px 6px rgba(0,0,0,0.15);
+        }
+
+        /* The Prominent Left Perch Branch for the Sparrow */
+        .main-perch {
+            width: 18px;
+            height: 140px;
+            bottom: -10px;
+            left: -12px;
+            transform: rotate(-70deg); 
+            z-index: 5;
+        }
+
+        .right-branch {
+            width: 16px;
+            height: 110px;
+            bottom: 0;
+            left: 4px;
+            transform: rotate(45deg);
+            z-index: 2;
+        }
+
+        .sub-branch-left {
+            width: 10px;
+            height: 60px;
+            bottom: 70px;
+            left: -5px;
+            transform: rotate(-30deg);
+            z-index: 2;
+        }
+
+        /* Organic Leaf Clusters Growing Out and Around Branches */
+        .leaf-cluster {
+            position: absolute;
+            background: linear-gradient(135deg, #2ecc71, #27ae60, #1e824c);
+            border-radius: 10% 75% 10% 75%;
+            box-shadow: inset -4px -4px 10px rgba(0,0,0,0.2), 2px 4px 10px rgba(0,0,0,0.15);
+            transform-origin: center;
+            animation: leafFlutter 0.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes leafFlutter {
+            0% { transform: translate(-50%, -50%) rotate(var(--r)) scale(1); }
+            100% { transform: translate(-50%, -50%) rotate(calc(var(--r) + 4deg)) scale(1.03); }
+        }
+
+        /* Background and framing leaves */
+        .c1 { width: 90px; height: 90px; top: -60px; left: -90px; --r: -45deg; z-index: 1; }
+        .c2 { width: 110px; height: 110px; top: -90px; left: 10px; --r: 15deg; z-index: 1; }
+        .c3 { width: 95px; height: 95px; top: -30px; left: 85px; --r: 60deg; z-index: 1; }
+        /* Foreground leaves shooting from behind the perch */
+        .c4 { width: 80px; height: 80px; top: 10px; left: -130px; --r: -70deg; z-index: 4; }
+        .c5 { width: 75px; height: 75px; top: 55px; left: -45px; --r: -20deg; z-index: 4; }
+        .c6 { width: 85px; height: 85px; top: -45px; left: 60px; --r: 30deg; z-index: 3; }
+
+        /* --- FALLING LEAVES --- */
+        .falling-leaf {
+            position: absolute;
+            width: 15px;
+            height: 8px;
+            background: #27ae60;
+            border-radius: 0 100px;
+            opacity: 0.8;
+            z-index: 6;
+            animation: leafFall 7s linear infinite;
+        }
+        @keyframes leafFall {
+            0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0; }
+            10% { opacity: 0.9; }
+            90% { opacity: 0.9; }
+            100% { transform: translateY(420px) rotate(540deg) translateX(120px); opacity: 0; }
+        }
+
+        /* --- SPARROW SITTING DIRECTLY ON THE BRANCH WOOD --- */
+        .sparrow-container {
+            position: absolute;
+            /* Perfectly aligned relative to the main-perch branch cylinder */
+            top: 40px; 
+            left: 8px; 
+            width: 50px;
+            height: 38px;
+            cursor: pointer;
+            z-index: 20;
+            transform-style: preserve-3d;
+            /* Counters the branch rotation so the bird stays straight up */
+            transform: rotate(70deg) scale(0.9); 
+        }
+
+        /* When global window animation kicks in for flying */
+        .sparrow-container.absolute-fly {
+            position: fixed !important;
+            transform-origin: center;
+            transition: left 5.5s linear, top 5.5s ease-out, transform 0.8s ease-in-out, opacity 0.5s ease;
+        }
+        
+        /* Sparrow Realistic Tones */
+        .bird-body {
+            position: absolute;
+            width: 44px;
+            height: 28px;
+            background: linear-gradient(120deg, #d3a27f 0%, #b87d55 60%, #f5f5f5 100%);
+            border-radius: 50% 50% 35% 35%;
+            top: 5px;
+            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.15), 1px 2px 3px rgba(0,0,0,0.1);
+        }
+        .bird-head {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: #a36a43;
+            border-radius: 50%;
+            right: -4px;
+            top: -7px;
+            box-shadow: inset -1px -1px 3px rgba(0,0,0,0.2);
+        }
+        .bird-head::before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 8px;
+            background: #ffffff;
+            border-radius: 50%;
+            bottom: 2px;
+            left: 4px;
+        }
+        .bird-eye {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #111;
+            border-radius: 50%;
+            right: 6px;
+            top: 6px;
+        }
+        .bird-beak {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-top: 3.5px solid transparent;
+            border-bottom: 3.5px solid transparent;
+            border-left: 8px solid #d4a359;
+            right: -10px;
+            top: 8px;
+        }
+        
+        /* Legs clamping onto the wood */
+        .bird-legs {
+            position: absolute;
+            bottom: -5px;
+            left: 14px;
+            width: 15px;
+            height: 7px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .leg {
+            width: 2px;
+            height: 7px;
+            background: #573318;
+        }
+
+        .gift-box {
+            position: absolute;
+            width: 13px;
+            height: 13px;
+            background: #ff4757;
+            right: -22px;
+            top: 11px;
+            border-radius: 2px;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+            z-index: 16;
+        }
+        .gift-box::before {
+            content: '';
+            position: absolute;
+            background: #eccc68;
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 0;
+        }
+        .gift-box::after {
+            content: '';
+            position: absolute;
+            background: #eccc68;
+            height: 2px;
+            width: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 0;
+        }
+        .gift-bow {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #eccc68;
+            border-radius: 50%;
+            top: -4px;
+            left: 4px;
+        }
+
+        .bird-wing {
+            position: absolute;
+            width: 24px;
+            height: 16px;
+            background: #87532e;
+            border-radius: 0% 100% 40% 60%;
+            left: 6px;
+            top: 9px;
+            transform-origin: left top;
+            box-shadow: -1px 1px 2px rgba(0,0,0,0.2);
+            border-bottom: 2px solid #573318;
+        }
+        .bird-tail {
+            position: absolute;
+            width: 20px;
+            height: 8px;
+            background: #6e401f;
+            left: -12px;
+            top: 14px;
+            border-radius: 4px 0 0 4px;
+            transform: rotate(20deg);
+        }
+
+        .flying .bird-wing {
+            animation: flap 0.15s infinite alternate;
+        }
+        @keyframes flap {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-45deg); }
+        }
+
+        .turn-inward {
+            transform: rotateY(70deg) translateZ(10px) !important;
+        }
+
+        /* --- 3D HOUSE SYSTEM --- */
+        .house-3d {
+            position: absolute;
+            bottom: 11%;
+            right: 8%;
+            width: 280px;
+            height: 340px;
+            transform-style: preserve-3d;
+            transform: rotateY(-22deg) rotateX(5deg);
+            z-index: 4;
+        }
+
+        .house-front {
+            position: absolute;
+            width: 200px;
+            height: 240px;
+            background: linear-gradient(to bottom, #34495e, #2c3e50);
+            bottom: 0;
+            left: 0;
+            border: 2px solid #2c3e50;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 20px;
+            transform: translateZ(0px);
+        }
+
+        .house-side {
+            position: absolute;
+            width: 120px;
+            height: 240px;
+            background: linear-gradient(to bottom, #2c3e50, #1a252f);
+            bottom: 0;
+            left: 200px;
+            transform-origin: left;
+            transform: rotateY(90deg);
+            border: 2px solid #1a252f;
+        }
+
+        .roof-front {
+            position: absolute;
+            top: 20px;
+            left: -10px;
+            width: 220px;
+            height: 90px;
+            background: #e74c3c;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            transform: translateZ(10px);
+            border-bottom: 4px solid #c0392b;
+        }
+        .roof-side {
+            position: absolute;
+            top: 15px;
+            left: 200px;
+            width: 125px;
+            height: 95px;
+            background: #c0392b;
+            transform-origin: left;
+            transform: rotateY(90deg) skewY(-23deg);
+        }
+
+        .windows-row {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 35px;
+        }
+        .window {
+            width: 45px;
+            height: 55px;
+            background: #f1c40f;
+            box-shadow: 0 0 20px #f1c40f;
+            border-radius: 5px;
+            border: 3px solid #f39c12;
+        }
+        .door-frame {
+            width: 65px;
+            height: 95px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            perspective: 600px;
+        }
+        .door {
+            width: 100%;
+            height: 100%;
+            background: #b33939;
+            border: 3px solid #842020;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: left;
+        }
+        .door.open {
+            transform: rotateY(-115deg);
+        }
+
+        /* --- WISHES SCREEN --- */
+        .birthday-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 245, 247, 0.98);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.5s ease;
+            z-index: 100;
+            text-align: center;
+            padding: 20px;
+        }
+        .birthday-screen.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .wishes-title {
+            font-size: 3.5rem;
+            color: #ff4757;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+        .wishes-text {
+            font-size: 1.6rem;
+            color: #2f3542;
+            max-width: 650px;
+            line-height: 1.6;
+        }
+        .celebration-icons {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @media (max-width: 768px) {
+            .tree-container { width: 160px; height: 320px; bottom: 11%; left: 4%; }
+            .house-3d { transform: scale(0.7) rotateY(-20deg); right: 0%; bottom: 8%; }
+            .wishes-title { font-size: 2.2rem; }
+            .wishes-text { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scene">
+        <!-- Natural Beautiful Tree Structure -->
+        <div class="tree-container" id="tree">
+            <div class="trunk"></div>
+            
+            <!-- unified swaying upper section -->
+            <div class="tree-upper">
+                <div class="leaf-cluster c1"></div>
+                <div class="leaf-cluster c2"></div>
+                <div class="leaf-cluster c3"></div>
+
+                <!-- Main Strong Perch Branch -->
+                <div class="branch main-perch">
+                    <div class="branch sub-branch-left"></div>
+                    
+                    <!-- SPARROW INSIDE THE BRANCH CONTAINER FOR PERFECT ADHESION -->
+                    <div class="sparrow-container" id="sparrow" onclick="flySparrow()">
+                        <div class="bird-tail"></div>
+                        <div class="bird-body">
+                            <div class="bird-wing"></div>
+                            <div class="bird-legs">
+                                <div class="leg"></div>
+                                <div class="leg"></div>
+                            </div>
+                        </div>
+                        <div class="bird-head">
+                            <div class="bird-eye"></div>
+                            <div class="bird-beak"></div>
+                            <div class="gift-box">
+                                <div class="gift-bow"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="branch right-branch"></div>
+
+                <div class="leaf-cluster c4"></div>
+                <div class="leaf-cluster c5"></div>
+                <div class="leaf-cluster c6"></div>
+            </div>
+        </div>
+
+        <!-- 3D House -->
+        <div class="house-3d" id="house">
+            <div class="roof-front"></div>
+            <div class="roof-side"></div>
+            <div class="house-side"></div>
+            <div class="house-front">
+                <div class="windows-row">
+                    <div class="window"></div>
+                    <div class="window"></div>
+                </div>
+                <div class="door-frame">
+                    <div class="door" id="door"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="garden-ground"></div>
+    <div class="garden-details" id="gardenDetails"></div>
+
+    <!-- Birthday Screen -->
+    <!-- Birthday Screen -->
+    <div class="birthday-screen" id="birthdayScreen">
+        <div class="celebration-icons">🎈🎈🎉 🎂 🎉🎈🎈</div>
+        <h1 class="wishes-title">Happy Birthday! ✨</h1>
+        <!-- Nayi line jo aapne boli thi -->
+        <h2 class="wishes-subtitle" style="font-size: 2rem; color: #34495e; margin-bottom: 15px; font-weight: 600;">Wishes from our family</h2>
+        <p class="wishes-text">
+            May your day be filled with love, laughter, and endless joy! <br>
+            Wishing you a fantastic year ahead full of success and beautiful moments. Stay blessed! 💖
+        </p>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const detailsContainer = document.getElementById('gardenDetails');
+            
+            // Grass and Flowers Generation
+            const colors = ['#ff4757', '#eccc68', '#ff6b81', '#ffa502'];
+            for (let i = 0; i < 45; i++) {
+                const randomX = Math.random() * 95 + 2;
+                if(i % 3 === 0) {
+                    const flower = document.createElement('div');
+                    flower.className = 'flower';
+                    flower.style.left = `${randomX}%`;
+                    flower.style.bottom = `${Math.random() * 15}px`;
+                    flower.style.color = colors[Math.floor(Math.random() * colors.length)];
+                    detailsContainer.appendChild(flower);
+                } else {
+                    const grass = document.createElement('div');
+                    grass.className = 'grass-tuft';
+                    grass.style.left = `${randomX}%`;
+                    grass.style.bottom = `${Math.random() * 20}px`;
+                    detailsContainer.appendChild(grass);
+                }
+            }
+
+            // Continuous Falling Leaves
+            setInterval(() => {
+                const leaf = document.createElement('div');
+                leaf.className = 'falling-leaf';
+                leaf.style.left = `${12 + (Math.random() * 8)}%`; 
+                leaf.style.bottom = `${250 + (Math.random() * 70)}px`;
+                leaf.style.background = Math.random() > 0.5 ? '#27ae60' : '#badc58';
+                document.querySelector('.scene').appendChild(leaf);
+                
+                setTimeout(() => { leaf.remove(); }, 7000);
+            }, 2400);
+        });
+
+        function flySparrow() {
+            const sparrow = document.getElementById('sparrow');
+            const door = document.getElementById('door');
+            const birthdayScreen = document.getElementById('birthdayScreen');
+
+            // Get starting coordinates before shifting DOM hierarchy
+            const initialRect = sparrow.getBoundingClientRect();
+
+            // Convert bird to fixed position so it can fly freely across screen coordinates
+            sparrow.className = 'sparrow-container absolute-fly flying';
+            sparrow.style.left = `${initialRect.left}px`;
+            sparrow.style.top = `${initialRect.top}px`;
+            document.body.appendChild(sparrow); // Shift to body element
+
+            const doorRect = door.getBoundingClientRect();
+
+            // Calculate precise destination inside window space
+            const targetX = doorRect.left + (doorRect.width / 4); 
+            const targetY = doorRect.top + (doorRect.height / 3);
+
+            // Trigger animation frame shift
+            setTimeout(() => {
+                sparrow.style.left = `${targetX}px`;
+                sparrow.style.top = `${targetY}px`;
+                sparrow.style.transform = 'scale(0.8) rotate(0deg)';
+            }, 50);
+
+            setTimeout(() => {
+                sparrow.classList.remove('flying');
+                sparrow.classList.add('turn-inward');
+
+                setTimeout(() => {
+                    door.classList.add('open');
+                    
+                    sparrow.style.transform = 'rotateY(70deg) translateZ(-40px) scale(0.18)';
+                    sparrow.style.opacity = '0';
+
+                    setTimeout(() => {
+                        birthdayScreen.classList.add('show');
+                    }, 1200);
+
+                }, 700);
+
+            }, 5500);
+        }
+    </script>
+</body>
+</html>
